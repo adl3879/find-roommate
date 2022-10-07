@@ -1,4 +1,5 @@
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
+import { getSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
@@ -13,5 +14,15 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
+}
 
 export default Home;
