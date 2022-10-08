@@ -40,6 +40,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  phone         String?
+  gender        String?
   accounts      Account[]
   sessions      Session[]
 }
