@@ -9,6 +9,7 @@ interface InputFieldProps {
   invalid?: boolean;
   className?: string;
   flip?: boolean;
+  required?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -19,6 +20,7 @@ const InputField: React.FC<InputFieldProps> = ({
   id,
   className,
   flip,
+  required,
 }) => {
   const [value, setValue] = React.useState<string>("");
 
@@ -41,6 +43,7 @@ const InputField: React.FC<InputFieldProps> = ({
           onChange={(e) => setValue(e.target.value)}
           value={value}
           id={id}
+          required={required}
         >
           {options?.map((op) => (
             <option key={Math.random()}>{op}</option>
@@ -56,6 +59,7 @@ const InputField: React.FC<InputFieldProps> = ({
           onChange={(e) => setValue(e.target.value)}
           value={value}
           id={id}
+          required={required}
         />
       )}
     </div>

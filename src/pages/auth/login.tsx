@@ -17,7 +17,7 @@ const Login: NextPage = () => {
     if (window !== undefined && localStorage.getItem("authToken")) {
       router.push("/");
     }
-  });
+  }, []);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -25,15 +25,11 @@ const Login: NextPage = () => {
       email: e.target.email.value,
       password: e.target.password.value,
     });
-    if (loginMutation.isSuccess) {
-      localStorage.setItem("authToken", loginMutation.data.token);
-      e.target.email.value = "";
-      e.target.password.value = "";
-    }
   };
 
-  if (loginMutation.isLoading) {
-    return <div>loading.....</div>;
+  if (loginMutation.isSuccess) {
+    localStorage.setItem("authToken", loginMutation.data.token);
+    router.push("/");
   }
 
   return (
@@ -56,7 +52,12 @@ const Login: NextPage = () => {
             id="password"
             flip={true}
           />
-          <Button className="my-5" label="Submit" type="submit" />
+          <Button
+            className="my-5"
+            label="Submit"
+            type="submit"
+            disabled={loginMutation.isLoading || loginMutation.isSuccess}
+          />
         </form>
 
         <div className="divider flex items-center gap-2 mb-3">

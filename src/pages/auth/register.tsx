@@ -32,28 +32,19 @@ const Register: NextPage = () => {
       password: e.target.password.value,
       gender: e.target.gender.value,
     });
-
-    if (registerMutation.isSuccess) {
-      if (window !== undefined) {
-        localStorage.setItem("authToken", registerMutation.data.token);
-        // reset form
-        e.target.name.value = "";
-        e.target.email.value = "";
-        e.target.phone.value = "";
-        e.target.password.value = "";
-        e.target.gender.value = "";
-      }
-    }
   };
 
-  const { data: session, status } = useSession();
-
-  if (status === "authenticated") {
-    // router.push("/");
+  if (registerMutation.isSuccess) {
+    if (window !== undefined) {
+      localStorage.setItem("authToken", registerMutation.data.token);
+      router.push("/");
+    }
   }
 
-  if (registerMutation.isLoading) {
-    return <div>loading......</div>;
+  const { status } = useSession();
+
+  if (status === "authenticated") {
+    router.push("/");
   }
 
   return (
@@ -98,7 +89,12 @@ const Register: NextPage = () => {
             leftIcon={<GenderIcon />}
             id="gender"
           />
-          <Button className="my-5" label="Submit" type="submit" />
+          <Button
+            className="my-5"
+            label="Submit"
+            type="submit"
+            disabled={registerMutation.isLoading || registerMutation.isSuccess}
+          />
         </form>
 
         <div className="divider flex items-center gap-2 mb-3">
