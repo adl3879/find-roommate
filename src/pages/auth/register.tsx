@@ -2,7 +2,9 @@ import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import router from "next/router";
+import { useEffect } from "react";
+import AuthError from "../../components/AuthError";
 import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import EmailIcon from "../../icons/Email";
@@ -10,18 +12,48 @@ import GenderIcon from "../../icons/Gender";
 import LockIcon from "../../icons/Lock";
 import PhoneIcon from "../../icons/Phone";
 import ProfileIcon from "../../icons/Profile";
+import { trpc } from "../../utils/trpc";
 
 const Register: NextPage = () => {
+  const registerMutation = trpc.user.register.useMutation();
+
+  useEffect(() => {
+    if (window !== undefined && localStorage.getItem("authToken")) {
+      router.push("/");
+    }
+  });
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(e.target.name.value);
+    registerMutation.mutate({
+      name: e.target.name.value,
+      email: e.target.email.value,
+      phone: e.target.phone.value,
+      password: e.target.password.value,
+      gender: e.target.gender.value,
+    });
+
+    if (registerMutation.isSuccess) {
+      if (window !== undefined) {
+        localStorage.setItem("authToken", registerMutation.data.token);
+        // reset form
+        e.target.name.value = "";
+        e.target.email.value = "";
+        e.target.phone.value = "";
+        e.target.password.value = "";
+        e.target.gender.value = "";
+      }
+    }
   };
 
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   if (status === "authenticated") {
     // router.push("/");
+  }
+
+  if (registerMutation.isLoading) {
+    return <div>loading......</div>;
   }
 
   return (
@@ -30,6 +62,10 @@ const Register: NextPage = () => {
         <h1 className="text-4xl font-bold mb-2">Hey There</h1>
         <p>Welcome, it's great to have you here, Please sign up</p>
         <form className="mt-8 sm:w-96" onSubmit={handleSubmit}>
+          {registerMutation.isError && (
+            <AuthError message={registerMutation.error.message} />
+          )}
+
           <InputField
             placeholder="Name"
             type="text"
@@ -41,19 +77,19 @@ const Register: NextPage = () => {
             placeholder="Email"
             type="email"
             leftIcon={<EmailIcon />}
-            id="emailaddr"
+            id="email"
           />
           <InputField
             placeholder="Phone"
             type="tel"
             leftIcon={<PhoneIcon />}
-            id="phonenum"
+            id="phone"
           />
           <InputField
             placeholder="Password"
             type="password"
             leftIcon={<LockIcon />}
-            id="pass"
+            id="password"
           />
           <InputField
             placeholder="Gender"

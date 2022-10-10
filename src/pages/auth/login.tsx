@@ -2,16 +2,39 @@ import { NextPage } from "next";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import router from "next/router";
+import { useEffect } from "react";
 import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import EmailIcon from "../../icons/Email";
 import LockIcon from "../../icons/Lock";
+import { trpc } from "../../utils/trpc";
 
 const Login: NextPage = () => {
+  const loginMutation = trpc.user.login.useMutation();
+
+  useEffect(() => {
+    if (window !== undefined && localStorage.getItem("authToken")) {
+      router.push("/");
+    }
+  });
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(e.target.name.value);
+    loginMutation.mutate({
+      email: e.target.email.value,
+      password: e.target.password.value,
+    });
+    if (loginMutation.isSuccess) {
+      localStorage.setItem("authToken", loginMutation.data.token);
+      e.target.email.value = "";
+      e.target.password.value = "";
+    }
   };
+
+  if (loginMutation.isLoading) {
+    return <div>loading.....</div>;
+  }
 
   return (
     <div className="h-screen flex items-center justify-end p-8 max-w-screen-xl mx-auto">
@@ -23,14 +46,14 @@ const Login: NextPage = () => {
             placeholder="Email"
             type="email"
             leftIcon={<EmailIcon />}
-            id="emailaddr"
+            id="email"
             flip={true}
           />
           <InputField
             placeholder="Password"
             type="password"
             leftIcon={<LockIcon />}
-            id="pass"
+            id="password"
             flip={true}
           />
           <Button className="my-5" label="Submit" type="submit" />
