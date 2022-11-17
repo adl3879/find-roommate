@@ -101,4 +101,9 @@ export const userRouter = t.router({
         token,
       };
     }),
+
+  logout: t.procedure.query(async ({ ctx }) => {
+    // [..]
+    return { success: true };
+  }),
 });

@@ -108,11 +108,21 @@ const Register: NextPage = () => {
             className="border rounded-full p-2 flex items-center justify-center"
             onClick={() => signIn("google")}
           >
-            <Image src="/images/googlelogo.png" width={30} height={30} />
+            <Image
+              src="/images/googlelogo.png"
+              width={30}
+              height={30}
+              alt="google logo"
+            />
           </button>
 
           <button className="border rounded-full p-2 flex items-center justify-center">
-            <Image src="/images/facebooklogo.png" width={30} height={30} />
+            <Image
+              src="/images/facebooklogo.png"
+              width={30}
+              height={30}
+              alt="facebook logo"
+            />
           </button>
         </div>
 
