@@ -6,11 +6,6 @@ import { createHash, verifyHash } from "../utils/hash";
 import { signJwtToken } from "../utils/jwt";
 
 export const userRouter = t.router({
-  hello: t.procedure.query(() => {
-    // [..]
-    return { msg: "hello world!" };
-  }),
-
   register: t.procedure
     .input(
       z.object({
@@ -101,9 +96,4 @@ export const userRouter = t.router({
         token,
       };
     }),
-
-  logout: t.procedure.query(async ({ ctx }) => {
-    // [..]
-    return { success: true };
-  }),
 });
